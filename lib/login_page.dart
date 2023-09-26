@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'welcome_page.dart';
 
-// Define global constants, colors and text
 const kPrimaryColor = Color(0xff65B8A6);
 const kSecondaryColor = Color(0xffDBDBDB);
 final kFillColor = Colors.grey[200];
@@ -11,11 +11,9 @@ const kPasswordHint = 'Password';
 const kLoginButtonText = 'Login';
 const kRegisterButtonText = 'Register';
 
-// LoginPage as the entry point for the login interface
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Use Scaffold to build the basic visual structure
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -25,15 +23,57 @@ class LoginPage extends StatelessWidget {
             colors: [kPrimaryColor, kSecondaryColor],
           ),
         ),
-        // LoginForm (main part of the login interface)
         child: Center(child: LoginForm()),
       ),
     );
   }
 }
 
-// LoginForm includes all the input fields and buttons
-class LoginForm extends StatelessWidget {
+class LoginForm extends StatefulWidget {
+  @override
+  _LoginFormState createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<LoginForm> {
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  Future<void> _login() async {
+    final String email = _usernameController.text;
+    final String password = _passwordController.text;
+
+    try {
+      final UserCredential userCredential =
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => WelcomePage()),
+      );
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException code: ${e.code}'); // print error code
+      String message;
+      switch (e.code) {
+        case 'invalid-email':
+          message = 'Bob found your email address format is incorrect';
+          break;
+        case 'INVALID_LOGIN_CREDENTIALS':
+          message = 'Bob suggests checking if your email address and password are correct';
+          break;
+        default:
+          message = 'login fail：${e.message}';
+          break;
+      }
+      final snackBar = SnackBar(content: Text(message)); // 创建SnackBar
+      ScaffoldMessenger.of(context).showSnackBar(snackBar); // 显示SnackBar
+    }
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -45,21 +85,15 @@ class LoginForm extends StatelessWidget {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        // build all the subcomponents of the loginForm
         children: [
           AppName(),
           SizedBox(height: 16),
-          CustomTextField(hint: kUsernameHint),
+          CustomTextField(controller: _usernameController, hint: kUsernameHint),
           SizedBox(height: 16),
-          CustomTextField(hint: kPasswordHint, isObscured: true),
+          CustomTextField(controller: _passwordController, hint: kPasswordHint, isObscured: true),
+
           SizedBox(height: 16),
-          LoginButton(onPressed: () {
-            // Navigate to the WelcomePage when pressing the button
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => WelcomePage()),
-            );
-          }, text: kLoginButtonText),
+          LoginButton(onPressed: _login, text: kLoginButtonText),
           RegisterButton(onPressed: () {}, text: kRegisterButtonText),
         ],
       ),
@@ -67,7 +101,6 @@ class LoginForm extends StatelessWidget {
   }
 }
 
-// The AppName component displays the name of the application which is 'SplitBill'
 class AppName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -83,14 +116,16 @@ class AppName extends StatelessWidget {
 
 // CustomTextField is a custom text input component
 class CustomTextField extends StatelessWidget {
-  final String hint; // Input prompt text
-  final bool isObscured; // Whether the text should be obscured for password fields
+  final TextEditingController controller;
+  final String hint;
+  final bool isObscured;
 
-  CustomTextField({required this.hint, this.isObscured = false});
+  CustomTextField({required this.controller, required this.hint, this.isObscured = false});
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
@@ -106,11 +141,11 @@ class CustomTextField extends StatelessWidget {
 }
 
 // LoginButton is a custom ElevatedButton
-class LoginButton  extends StatelessWidget {
-  final VoidCallback onPressed; // Callback triggered when the button is pressed
-  final String text; // Button text
+class LoginButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final String text;
 
-  LoginButton ({required this.onPressed, required this.text});
+  LoginButton({required this.onPressed, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -123,8 +158,8 @@ class LoginButton  extends StatelessWidget {
 
 // RegisterButton is a custom TextButton
 class RegisterButton extends StatelessWidget {
-  final VoidCallback onPressed; // Callback triggered when the button is presses
-  final String text; // Button text
+  final VoidCallback onPressed;
+  final String text;
 
   RegisterButton({required this.onPressed, required this.text});
 
