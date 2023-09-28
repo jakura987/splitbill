@@ -33,6 +33,9 @@ dependencies:
   firebase_core: "^2.16.0"
   firebase_auth: "^4.10.0"
   cloud_firestore: "^4.9.2"
+  google_sign_in: "^5.2.1"
+
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -55,6 +58,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/images/btn_google.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
