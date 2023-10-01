@@ -4,7 +4,7 @@ import 'main_module/bill_page.dart';
 import 'main_module/group_page.dart';
 import 'main_module/home_page.dart';
 import 'main_module/me_page.dart';
-import 'main_module/plus_page.dart';
+import 'main_module/add_page.dart';
 
 
 class NavigatePage extends StatefulWidget {
@@ -18,7 +18,7 @@ class _NavigatePageState extends State<NavigatePage> {
   final List<Widget> _pages = [
     HomePage(),
     GroupPage(),
-    PlusPage(),
+    AddPage(),
     BillPage(),
     MePage(),
   ];
