@@ -161,10 +161,20 @@ class _RegisterFormState extends State<RegisterForm> {
           );
         }
       } on FirebaseAuthException catch (e) {
-        // Handle error accordingly
+        if (e.code == 'email-already-in-use') {
+          // 显示错误消息给用户，告知邮箱已被使用
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('该电子邮件地址已被其他账户使用。')));
+        } else {
+          // 其他Firebase错误的处理
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? '发生未知错误')));
+        }
+      } catch (e) {
+        // 处理其他未知错误
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('发生未知错误')));
       }
     }
   }
+
 
 }
 

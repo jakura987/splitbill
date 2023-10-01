@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:spiltbill/dashed_line.dart';
+import 'package:spiltbill/navigate_page.dart';
 import 'package:spiltbill/register_page.dart';
 import 'welcome_page.dart';
 
@@ -56,7 +57,7 @@ class _LoginFormState extends State<LoginForm> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => WelcomePage()),
+        MaterialPageRoute(builder: (context) => NavigatePage()),
       );
     } on FirebaseAuthException catch (e) {
       print('FirebaseAuthException code: ${e.code}'); // print error code

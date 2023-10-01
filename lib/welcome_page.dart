@@ -3,9 +3,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'login_page.dart';
 // when user logins successfully, trigger this page
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatefulWidget {
+  @override
+  _WelcomePageState createState() => _WelcomePageState();
+}
+
+class _WelcomePageState extends State<WelcomePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  int _currentIndex = 0;
+
+  final List<Widget> _pages = [
+    Center(child: Text('Home Page')),
+    Center(child: Text('Group Page')),
+    Center(child: Text('Plus Page')),
+    Center(child: Text('Bill Page')),
+    Center(child: Text('Me Page')),
+  ];
 
   Future<String> getUserName() async {
     final user = _auth.currentUser;
@@ -38,22 +52,27 @@ class WelcomePage extends StatelessWidget {
         ),
         title: Text('Welcome Page'),
       ),
-
-      body: Center(
-        child: FutureBuilder<String>(
-          future: getUserName(), // 调用函数获取用户名
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator(); // 加载中显示加载指示器
-            }
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}'); // 出错时显示错误信息
-            }
-            return Text(snapshot.data ?? 'Welcome', style: TextStyle(fontSize: 24));
-          },
-        ),
+      body: _pages[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        unselectedItemColor: Colors.grey, // 未选中项的颜色
+        selectedItemColor: Colors.black, // 选中项的颜色
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Group'),
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: '+'),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt), label: 'Bill'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Me'),
+        ],
       ),
+
     );
   }
 }
+
 
