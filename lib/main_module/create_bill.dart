@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
+
 class CreateBill extends StatefulWidget {
   final List<String> selectedGroups;
 
@@ -10,11 +12,30 @@ class CreateBill extends StatefulWidget {
   _CreateBillState createState() => _CreateBillState();
 }
 
+class PersonStatus {
+  final String name;
+  final bool status;
+
+  PersonStatus({required this.name, this.status = false});
+
+  // 将对象转换为Map以供Firebase使用
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'status': status,
+    };
+  }
+}
+
+
 class _CreateBillState extends State<CreateBill> {
+
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<String> _selectedPeople = [];
   List<String> allPeopleNames = [];
+  Set<String> uniquePeopleNamesSet = Set<String>();
+
 
   DateTime? _selectedDate;
   String? _billDescription;
@@ -22,9 +43,13 @@ class _CreateBillState extends State<CreateBill> {
   double? _billPrice;
   String _summaryText = '';
 
+
   Future<void> _submitBill() async {
     try {
       // Prepare the data
+      List<PersonStatus> peopleStatus = _selectedPeople.map((personName) => PersonStatus(name: personName)).toList();
+      List<Map<String, dynamic>> peopleStatusMapList = peopleStatus.map((e) => e.toMap()).toList();
+
       Map<String, dynamic> billData = {
         'billName': _billName,
         'billDate': Timestamp.fromDate(_selectedDate!),
@@ -33,6 +58,7 @@ class _CreateBillState extends State<CreateBill> {
         'peopleNumber': _selectedPeople.length,
         'AAPP': _billPrice! / _selectedPeople.length,
         'peopleName': _selectedPeople,
+        'peopleStatus': peopleStatusMapList,
       };
 
       // Submit the data to Firestore
@@ -95,8 +121,20 @@ class _CreateBillState extends State<CreateBill> {
 
     print('Received Selected Groups: ${widget.selectedGroups}');
 
-    fetchPeopleNamesFromSelectedGroups();
+    fetchPeopleNames();
   }
+
+  Future<void> fetchPeopleNames() async {
+    for (String groupName in widget.selectedGroups) {
+      final group = await _firestore.collection('groups').doc(groupName).get();
+      final List<String> peopleNames = List<String>.from(group['peopleName']);
+      uniquePeopleNamesSet.addAll(peopleNames);  // 使用 addAll 方法将所有人名添加到 Set 中
+    }
+    setState(() {
+      allPeopleNames = uniquePeopleNamesSet.toList();  // 将 Set 转换为 List
+    });
+  }
+
 
   Future<void> fetchPeopleNamesFromSelectedGroups() async {
     for (String groupName in widget.selectedGroups) {
@@ -111,6 +149,7 @@ class _CreateBillState extends State<CreateBill> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Create your bill"),

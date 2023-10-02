@@ -1,40 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:provider/provider.dart';
 import 'create_bill.dart';
-import '../user_model.dart';
 
-class AddPage extends StatefulWidget {
+class PlusPage extends StatefulWidget {
   @override
   _ChooseGroupState createState() => _ChooseGroupState();
 }
 
-class _ChooseGroupState extends State<AddPage> {
-
-  bool _isInit = true;
-
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      _isInit = false;
-      // 调用 UserModel 的 fetchUser 方法
-      final userModel = Provider.of<UserModel>(context, listen: false);
-      userModel.fetchUser();
-    }
-    super.didChangeDependencies();
-  }
-
-
+class _ChooseGroupState extends State<PlusPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<String> selectedGroups = [];
   bool allGroupsSelected = false;  // 新增
 
   @override
   Widget build(BuildContext context) {
-
-    // 获取UserModel的实例
-    UserModel userModel = Provider.of<UserModel>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Choose your group"),
@@ -43,7 +22,7 @@ class _ChooseGroupState extends State<AddPage> {
         children: [
           Expanded(
             child: StreamBuilder(
-              stream: _firestore.collection('groups').where('peopleName', arrayContains: userModel.userName).snapshots(),
+              stream: _firestore.collection('groups').snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (!snapshot.hasData) return CircularProgressIndicator();
                 List<String> allGroupNames = snapshot.data!.docs.map((doc) => doc['groupName'] as String).toList();

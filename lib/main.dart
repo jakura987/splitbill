@@ -1,6 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spiltbill/main_module/add_page.dart';
+import 'package:spiltbill/main_module/bill_page.dart';
+import 'package:spiltbill/show_bill.dart';
 import 'package:spiltbill/user_model.dart';
 import 'auth_service.dart';
 import 'firebase_options.dart';
