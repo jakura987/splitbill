@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 import 'package:spiltbill/dashed_line.dart';
 import 'package:spiltbill/navigate_page.dart';
 import 'package:spiltbill/register_page.dart';
+import '../auth_service.dart';
 import 'welcome_page.dart';
 
 //TODO 将颜色背景之类的写成常量放一个文件
@@ -48,21 +50,22 @@ class _LoginFormState extends State<LoginForm> {
     final String email = _usernameController.text;
     final String password = _passwordController.text;
 
-    try {
-      final UserCredential userCredential =
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+    // 获取 AuthService 的实例
+    final authService = Provider.of<AuthService>(context, listen: false);
 
+    // 使用 AuthService 的 signIn 方法进行登录
+    final userCredential = await authService.signIn(email, password);
+
+    if (userCredential != null) {
+      // 如果登录成功，导航到 NavigatePage 页面
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => NavigatePage()),
       );
-    } on FirebaseAuthException catch (e) {
-      print('FirebaseAuthException code: ${e.code}'); // print error code
+    } else {
+      // 如果登录失败，根据 FirebaseAuthException 的错误代码显示对应的错误信息
       String message;
-      switch (e.code) {
+      switch (authService.errorCode) {
         case 'invalid-email':
           message = 'Bob found your email address format is incorrect';
           break;
@@ -70,13 +73,16 @@ class _LoginFormState extends State<LoginForm> {
           message = 'Bob suggests checking if your email address and password are correct';
           break;
         default:
-          message = 'login fail：${e.message}';
+          message = 'login fail: ${authService.errorMessage}';
           break;
       }
-      final snackBar = SnackBar(content: Text(message)); // 创建SnackBar
-      ScaffoldMessenger.of(context).showSnackBar(snackBar); // 显示SnackBar
+
+      // 显示包含错误信息的 SnackBar
+      final snackBar = SnackBar(content: Text(message));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
+
 
   //跳转register页面
   void _navigateToRegisterPage() {

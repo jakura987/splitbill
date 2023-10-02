@@ -179,8 +179,6 @@ class _RegisterFormState extends State<RegisterForm> {
 }
 
 
-
-
 class CustomTextFormField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;

@@ -1,5 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:spiltbill/user_model.dart';
+import 'auth_service.dart';
 import 'firebase_options.dart';
 import 'login_page.dart';
 
@@ -8,7 +11,19 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   ); // 初始化 Firebase
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => UserModel(),
+        ),
+        Provider(
+          create: (context) => AuthService(),
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -17,14 +32,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: kAppName,
       theme: ThemeData(
-        primaryColor: kPrimaryColor, // 常量 kPrimaryColor 也已经移动到 login_page.dart，可以在这里直接定义颜色值
-        colorScheme: ThemeData().colorScheme.copyWith(secondary: kSecondaryColor), // 常量 kSecondaryColor 也已经移动到 login_page.dart，可以在这里直接定义颜色值
+        primaryColor: kPrimaryColor,
+        colorScheme: ThemeData().colorScheme.copyWith(secondary: kSecondaryColor),
         buttonTheme: ButtonThemeData(
-          buttonColor: kPrimaryColor, // 常量 kPrimaryColor 也已经移动到 login_page.dart，可以在这里直接定义颜色值
+          buttonColor: kPrimaryColor,
           textTheme: ButtonTextTheme.primary,
         ),
       ),
-      home: LoginPage(), // 使用刚刚在 login_page.dart 中定义的 LoginRegisterPage
+      home: LoginPage(),
     );
   }
 }
