@@ -47,8 +47,6 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   late String? userImage = 'assets/images/image1.jpg';
 
 
-
-
   @override
   void initState() {
     super.initState();
@@ -57,7 +55,6 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     });
   }
 
-
   Future<void> _openHiveBox() async {
     await Hive.openBox('settings');
     setState(() {
@@ -65,14 +62,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     });
   }
 
-
-
   @override
   void dispose() {
     Hive.close();  // 如果您在整个应用中只有一个Box，则可以这样关闭；否则可以使用Hive.box('settings').close()关闭特定的Box。
     super.dispose();
   }
-
 
   Future<void> _loadUserImage() async {
     final userModel = Provider.of<UserModel>(context);
@@ -84,6 +78,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     }
   }
 
+  //TODO: 修改后要重新登录才会显示修改后的名字
   Future<void> _renameUser() async {
     String? newName = await _showRenameDialog();
     if (newName != null && newName.isNotEmpty) {
@@ -112,7 +107,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     }
   }
 
-
+  //修改名字的部分页面
   Future<String?> _showRenameDialog() async {
     String? newName;
     final TextEditingController nameController = TextEditingController();
@@ -146,8 +141,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     );
   }
 
-
-
+  //修改密码
   Future<bool> _showPasswordVerificationDialog() async {
     final TextEditingController passwordController = TextEditingController();
     return await showDialog<bool>(
@@ -188,7 +182,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       },
     ) ?? false;
   }
-
+  //也是修改密码
   Future<void> _showChangePasswordDialog() async {
     final TextEditingController newPasswordController = TextEditingController();
     showDialog<void>(

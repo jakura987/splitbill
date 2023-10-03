@@ -8,8 +8,6 @@ import 'package:provider/provider.dart';
 import '../models/user_avatar_model.dart';
 import '../models/user_model.dart';
 
-
-
 class MePage extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 

@@ -141,8 +141,27 @@ class _RegisterFormState extends State<RegisterForm> {
     );
   }
 
+  Future<bool> isNameUnique(String name) async {
+    final users = await FirebaseFirestore.instance.collection('users')
+        .where('name', isEqualTo: name)
+        .get();
+
+    return users.docs.isEmpty;
+  }
+
+
   Future<void> _register() async {
     if (_formKey.currentState?.validate() ?? false) {
+
+      // Step 1: Check if the name is unique
+      bool nameIsUnique = await isNameUnique(_preferredNameController.text.trim());
+      if (!nameIsUnique) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('该名称已被其他账户使用。'))
+        );
+        return;
+      }
+
       try {
         UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
@@ -174,6 +193,7 @@ class _RegisterFormState extends State<RegisterForm> {
       }
     }
   }
+
 
 
 }
