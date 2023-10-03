@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spiltbill/main_module/settings_page.dart';
 
 import 'main_module/bill_page.dart';
 import 'main_module/group_page.dart';
@@ -24,6 +25,7 @@ class _NavigatePageState extends State<NavigatePage> {
     AddPage(),
     BillPage(),
     MePage(),
+    SettingsPage()
   ];
 
   @override

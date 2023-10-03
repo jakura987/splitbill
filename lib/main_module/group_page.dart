@@ -16,6 +16,9 @@ class GroupPage extends StatelessWidget{
             Text('Group Page', style: TextStyle(fontSize: 24)),
             Text('User Name: ${userModel.userName}', style: TextStyle(fontSize: 20)), // 显示用户名
             Text('User Email: ${userModel.userEmail}', style: TextStyle(fontSize: 20)), // 显示用户邮件
+            Text('User dailyLimit: ${userModel.dailyLimit}', style: TextStyle(fontSize: 20)),
+            Text('User weeklyLimit: ${userModel.weeklyLimit}', style: TextStyle(fontSize: 20)),
+            Text('User monthlyLimit: ${userModel.monthlyLimit}', style: TextStyle(fontSize: 20)),
           ],
         ),
       ),

@@ -172,6 +172,9 @@ class _RegisterFormState extends State<RegisterForm> {
           await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
             'name': _preferredNameController.text.trim(),
             'email': _emailController.text.trim(),
+            'dailyLimit': 20,  // 默认的日限额
+            'weeklyLimit': 200, // 默认的周限额
+            'monthlyLimit': 2000, // 默认的月限额
           });
 
           Navigator.pushReplacement(
@@ -179,6 +182,7 @@ class _RegisterFormState extends State<RegisterForm> {
             MaterialPageRoute(builder: (context) => LoginPage()),
           );
         }
+
       } on FirebaseAuthException catch (e) {
         if (e.code == 'email-already-in-use') {
           // 显示错误消息给用户，告知邮箱已被使用

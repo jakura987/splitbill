@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spiltbill/main_module/profile_edit_page.dart';
+import 'package:spiltbill/main_module/settings_page.dart';
 import '../constants/palette.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../login_page.dart';
@@ -56,7 +57,7 @@ class MePage extends StatelessWidget {
             SizedBox(height: screenHeight * 0.03),
 
             // 功能列表部分
-            ..._buildFunctionList(),
+            ..._buildFunctionList(context),
 
             Spacer(),
 
@@ -133,29 +134,42 @@ class MePage extends StatelessWidget {
 
 
 
-  List<Widget> _buildFunctionList() {
-    final functions = ['Notifications', 'Rate us', 'Contact us'];
-    return functions.map((f) => _buildFunctionItem(f)).toList();
+  List<Widget> _buildFunctionList(BuildContext context) {
+    final functions = ['Notifications', 'Rate us', 'Contact us', 'Settings'];
+    return functions.map((f) => _buildFunctionItem(context, f)).toList();
   }
 
-  Widget _buildFunctionItem(String name) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-            bottom: BorderSide(color: Colors.grey[400]!, width: 0.5)
+
+  Widget _buildFunctionItem(BuildContext context, String name) {
+    return GestureDetector(
+      onTap: () {
+        if (name == 'Settings') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SettingsPage()),
+          );
+        }
+        // 在此，你可以根据其他的功能名称添加更多的跳转逻辑
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(
+              bottom: BorderSide(color: Colors.grey[400]!, width: 0.5)
+          ),
         ),
-      ),
-      padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(name, style: TextStyle(fontSize: 16)),
-          Icon(Icons.arrow_forward_ios, color: Colors.grey),
-        ],
+        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(name, style: TextStyle(fontSize: 16)),
+            Icon(Icons.arrow_forward_ios, color: Colors.grey),
+          ],
+        ),
       ),
     );
   }
+
 
   Widget _buildLogoutSection(BuildContext context) {
     return Column(
