@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import '../login_page.dart';
-import '../user_model.dart';
+import '../models/user_model.dart';
 import '../auth_service.dart';
 
 class HomePage extends StatefulWidget {

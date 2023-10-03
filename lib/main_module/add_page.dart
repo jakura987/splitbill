@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'create_bill.dart';
-import '../user_model.dart';
+import '../models/user_model.dart';
 
 class AddPage extends StatefulWidget {
   @override

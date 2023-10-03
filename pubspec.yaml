@@ -35,6 +35,9 @@ dependencies:
   cloud_firestore: "^4.9.2"
   google_sign_in: "^5.2.1"
   provider: "^6.0.5"
+  image_picker: "^1.0.4"
+  hive: "^2.2.3"
+  hive_flutter: "^1.1.0"
 
 
 
@@ -61,6 +64,8 @@ dev_dependencies:
 flutter:
   assets:
     - assets/images/btn_google.png
+    - assets/images/image1.jpg
+    - assets/images/image2.jpg
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
