@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:spiltbill/main_module/add_page.dart';
 import 'package:spiltbill/main_module/bill_page.dart';
 import 'package:spiltbill/models/user_avatar_model.dart';
-import 'package:spiltbill/show_bill.dart';
 import 'package:spiltbill/models/user_model.dart';
 import 'auth_service.dart';
 import 'firebase_options.dart';

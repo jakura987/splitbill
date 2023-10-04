@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:spiltbill/main_module/add_page.dart';
+import 'package:spiltbill/navigate_page.dart';
 
 
 class CreateBill extends StatefulWidget {
@@ -44,7 +45,69 @@ class _CreateBillState extends State<CreateBill> {
   String _summaryText = '';
 
 
+  Future<void> _checkDailyLimit() async {
+    List<String> exceededUsers = [];
+    double currentBillAAPP = _billPrice! / _selectedPeople.length;
+
+    for (var person in _selectedPeople) {
+      double peopleSpend = currentBillAAPP;
+      QuerySnapshot billsSnapshot = await _firestore.collection('bills').where('billDate', isEqualTo: _selectedDate).get();
+      for (var bill in billsSnapshot.docs) {
+        var billData = bill.data() as Map<String, dynamic>;
+        if (billData['peopleName'] is List && (billData['peopleName'] as List).contains(person)) {
+          peopleSpend += billData['AAPP']?.toDouble() ?? 0.0;
+        }
+      }
+
+      // New code for fetching user data based on name
+      QuerySnapshot userQuery = await _firestore.collection('users').where('name', isEqualTo: person).get();
+      Map<String, dynamic>? userData;
+      if (userQuery.docs.isNotEmpty) {
+        userData = userQuery.docs.first.data() as Map<String, dynamic>;
+      } else {
+        print('No data found for user $person');
+      }
+
+      double dailyLimit = userData?['dailyLimit']?.toDouble() ?? 0.0;
+      print("Person: $person, Spend: $peopleSpend, Limit: $dailyLimit");
+
+      if (peopleSpend > dailyLimit) {
+        exceededUsers.add(person);
+      }
+    }
+
+
+    if (exceededUsers.isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Warning'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min, // This makes the column only as tall as its children.
+            children: exceededUsers.map((user) => Text('$user have exceeded daily limit.')).toList(),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => NavigatePage()),
+                        (route) => false
+                );
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
+  }
+
+
+
   Future<void> _submitBill() async {
+    await _checkDailyLimit();
     try {
       // Prepare the data
       List<PersonStatus> peopleStatus = _selectedPeople.map((personName) => PersonStatus(name: personName)).toList();
@@ -67,6 +130,10 @@ class _CreateBillState extends State<CreateBill> {
       // Show snackbar upon successful submission
       final snackBar = SnackBar(content: Text('Submit success'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+
+
+
     } catch (e) {
       print('Error submitting bill: $e');
       final snackBar = SnackBar(content: Text('Error submitting bill. Please try again.'));
@@ -89,6 +156,7 @@ class _CreateBillState extends State<CreateBill> {
               TextButton(
                 child: Text('OK'),
                 onPressed: () {
+
                   Navigator.of(context).pop();
                 },
               ),
